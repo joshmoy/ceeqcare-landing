@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -113,15 +113,19 @@ function SignalCard({
   body,
   span,
   image,
+  isLight,
 }: {
   title: string;
   body: string;
   span: string;
   image: string;
+  isLight: boolean;
 }) {
   return (
     <article
-      className={`group relative overflow-hidden rounded-[2rem] border border-white/12 bg-white/[0.04] ${span}`}
+      className={`group relative overflow-hidden rounded-[2rem] border ${span} ${
+        isLight ? "border-black/8 bg-black/[0.03]" : "border-white/12 bg-white/[0.04]"
+      }`}
     >
       <div
         className="absolute inset-0 bg-cover bg-center opacity-70 grayscale contrast-125 transition-transform duration-700 ease-out group-hover:scale-105"
@@ -142,6 +146,7 @@ function SignalCard({
 
 export default function Home() {
   const root = useRef<HTMLElement | null>(null);
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
 
   useGSAP(
     () => {
@@ -199,21 +204,56 @@ export default function Home() {
   const scrubCopy =
     "CareSight AI gives care leaders one operating surface for workforce strain, missed visits, complaint drift, incident escalation, and CQC readiness, so intervention happens before the service slips.";
 
+  useEffect(() => {
+    const savedTheme = window.localStorage.getItem("ceeqcare-theme");
+    if (savedTheme === "light" || savedTheme === "dark") {
+      setTheme(savedTheme);
+    }
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+    window.localStorage.setItem("ceeqcare-theme", theme);
+  }, [theme]);
+
+  const isLight = theme === "light";
+
   return (
     <main
       ref={root}
-      className="landing-shell w-full max-w-full overflow-x-hidden bg-[#071214] text-[#f5efe6]"
+      className={`landing-shell w-full max-w-full overflow-x-hidden ${
+        isLight
+          ? "bg-[#f6f0e6] text-[#102225]"
+          : "bg-[#071214] text-[#f5efe6]"
+      }`}
     >
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[42rem] bg-[radial-gradient(circle_at_20%_15%,rgba(227,119,59,0.28),transparent_30%),radial-gradient(circle_at_80%_10%,rgba(72,123,107,0.22),transparent_24%),linear-gradient(180deg,rgba(7,18,20,0.1),rgba(7,18,20,0))]" />
+      <div
+        className={`pointer-events-none absolute inset-x-0 top-0 h-[42rem] ${
+          isLight
+            ? "bg-[radial-gradient(circle_at_20%_15%,rgba(227,119,59,0.16),transparent_30%),radial-gradient(circle_at_80%_10%,rgba(72,123,107,0.14),transparent_24%),linear-gradient(180deg,rgba(255,255,255,0.55),rgba(246,240,230,0))]"
+            : "bg-[radial-gradient(circle_at_20%_15%,rgba(227,119,59,0.28),transparent_30%),radial-gradient(circle_at_80%_10%,rgba(72,123,107,0.22),transparent_24%),linear-gradient(180deg,rgba(7,18,20,0.1),rgba(7,18,20,0))]"
+        }`}
+      />
 
       <header className="sticky top-0 z-30 px-4 py-4 md:px-8">
-        <div className="mx-auto flex w-full max-w-[86rem] items-center justify-between gap-4 rounded-full border border-white/10 bg-[rgba(10,23,25,0.72)] px-4 py-3 backdrop-blur-xl md:px-6">
+        <div
+          className={`mx-auto flex w-full max-w-[86rem] items-center justify-between gap-4 rounded-full border px-4 py-3 backdrop-blur-xl md:px-6 ${
+            isLight
+              ? "border-black/8 bg-[rgba(255,251,245,0.76)]"
+              : "border-white/10 bg-[rgba(10,23,25,0.72)]"
+          }`}
+        >
           <Link href="#top" className="flex items-center gap-3" aria-label="CareSight AI home">
             <span className="grid h-11 w-11 place-items-center rounded-full bg-[linear-gradient(135deg,#e37a45,#f0b18c)] text-base font-semibold text-[#0b1719]">
               C
             </span>
             <span>
-              <span className="block text-sm uppercase tracking-[0.24em] text-white/56">
+              <span
+                className={`block text-sm uppercase tracking-[0.24em] ${
+                  isLight ? "text-[#6f5b4d]" : "text-white/56"
+                }`}
+              >
                 CeeqCare
               </span>
               <strong className="block text-[1.02rem] tracking-[-0.03em]">CareSight AI</strong>
@@ -225,20 +265,42 @@ export default function Home() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="rounded-full px-4 py-2 text-sm text-white/72 transition-colors duration-300 hover:text-white"
+                className={`rounded-full px-4 py-2 text-sm transition-colors duration-300 ${
+                  isLight
+                    ? "text-[#516864] hover:text-[#102225]"
+                    : "text-white/72 hover:text-white"
+                }`}
               >
                 {item.label}
               </Link>
             ))}
+            <button
+              type="button"
+              onClick={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
+              className={`rounded-full border px-4 py-3 text-sm font-medium transition-colors duration-300 ${
+                isLight
+                  ? "border-black/10 bg-white/70 text-[#102225]"
+                  : "border-white/12 bg-white/[0.04] text-white/82"
+              }`}
+            >
+              {isLight ? "Dark mode" : "Light mode"}
+            </button>
             <Link
               href="#contact"
-              className="rounded-full bg-[#f3ebdf] px-5 py-3 text-sm font-medium text-[#081315] transition-transform duration-300 hover:-translate-y-0.5"
+              className={`rounded-full px-5 py-3 text-sm font-medium transition-transform duration-300 hover:-translate-y-0.5 ${
+                isLight
+                  ? "bg-[#102225] text-[#f7f1e8]"
+                  : "bg-[#f3ebdf] text-[#081315]"
+              }`}
             >
               Book a pilot
             </Link>
           </nav>
 
-          <MobileNav />
+          <MobileNav
+            theme={theme}
+            onToggleTheme={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
+          />
         </div>
       </header>
 
@@ -256,14 +318,18 @@ export default function Home() {
             </p>
             <h1
               data-hero-item
-              className="mt-6 max-w-[14ch] text-[clamp(3rem,5.6vw,5.8rem)] font-semibold leading-[0.92] tracking-[-0.06em] text-white"
+              className={`mt-6 max-w-[14ch] text-[clamp(3rem,5.6vw,5.8rem)] font-semibold leading-[0.92] tracking-[-0.06em] ${
+                isLight ? "text-[#102225]" : "text-white"
+              }`}
             >
               See the week&apos;s service risk before it becomes a missed visit,
               complaint, or inspection problem.
             </h1>
             <p
               data-hero-item
-              className="mt-8 max-w-[44rem] text-[1.08rem] leading-8 text-white/72 md:text-[1.15rem]"
+              className={`mt-8 max-w-[44rem] text-[1.08rem] leading-8 md:text-[1.15rem] ${
+                isLight ? "text-[#425a55]" : "text-white/72"
+              }`}
             >
               CareSight AI gives UK domiciliary care agencies an earlier read on
               staffing pressure, route strain, incident patterns, and compliance drift
@@ -273,13 +339,21 @@ export default function Home() {
             <div data-hero-item className="mt-10 flex flex-wrap gap-4">
               <Link
                 href="#contact"
-                className="rounded-full bg-[#f3ebdf] px-7 py-4 text-sm font-medium text-[#071214] transition-transform duration-300 hover:-translate-y-0.5"
+                className={`rounded-full px-7 py-4 text-sm font-medium transition-transform duration-300 hover:-translate-y-0.5 ${
+                  isLight
+                    ? "bg-[#102225] text-[#f7f1e8]"
+                    : "bg-[#f3ebdf] text-[#071214]"
+                }`}
               >
                 Request a pilot
               </Link>
               <Link
                 href="#signals"
-                className="rounded-full border border-white/16 bg-white/[0.05] px-7 py-4 text-sm text-white transition-colors duration-300 hover:bg-white/[0.1]"
+                className={`rounded-full border px-7 py-4 text-sm transition-colors duration-300 ${
+                  isLight
+                    ? "border-black/12 bg-white/60 text-[#102225] hover:bg-white/90"
+                    : "border-white/16 bg-white/[0.05] text-white hover:bg-white/[0.1]"
+                }`}
               >
                 Explore the platform
               </Link>
@@ -287,7 +361,9 @@ export default function Home() {
 
             <div
               data-hero-item
-              className="mt-14 flex flex-wrap gap-6 text-sm text-white/62"
+              className={`mt-14 flex flex-wrap gap-6 text-sm ${
+                isLight ? "text-[#5b726d]" : "text-white/62"
+              }`}
             >
               <span>Missed visits</span>
               <span>Fatigue detection</span>
@@ -300,7 +376,13 @@ export default function Home() {
             <div className="absolute -left-8 top-10 hidden h-40 w-40 rounded-full bg-[#d86d39]/25 blur-3xl lg:block" />
             <div className="absolute -right-2 bottom-6 hidden h-52 w-52 rounded-full bg-[#5a8c7e]/18 blur-3xl lg:block" />
 
-            <div className="relative overflow-hidden rounded-[2.4rem] border border-white/12 bg-[rgba(12,28,31,0.78)] p-5 shadow-[0_30px_80px_rgba(0,0,0,0.35)] md:p-6">
+            <div
+              className={`relative overflow-hidden rounded-[2.4rem] border p-5 md:p-6 ${
+                isLight
+                  ? "border-black/8 bg-[rgba(255,255,255,0.7)] shadow-[0_30px_80px_rgba(45,54,50,0.14)]"
+                  : "border-white/12 bg-[rgba(12,28,31,0.78)] shadow-[0_30px_80px_rgba(0,0,0,0.35)]"
+              }`}
+            >
               <div
                 className="rounded-[2rem] bg-cover bg-center p-6 md:p-8"
                 style={{
@@ -348,17 +430,33 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="mt-4 grid gap-4 rounded-[1.8rem] border border-white/10 bg-white/[0.04] p-5 md:grid-cols-[1fr_auto] md:items-center">
+              <div
+                className={`mt-4 grid gap-4 rounded-[1.8rem] border p-5 md:grid-cols-[1fr_auto] md:items-center ${
+                  isLight
+                    ? "border-black/8 bg-[rgba(16,34,37,0.05)]"
+                    : "border-white/10 bg-white/[0.04]"
+                }`}
+              >
                 <div>
                   <span className="block text-sm uppercase tracking-[0.18em] text-[#f0b18c]">
                     Priority signal
                   </span>
-                  <p className="mt-2 max-w-[32rem] text-[1.02rem] leading-7 text-white/72">
+                  <p
+                    className={`mt-2 max-w-[32rem] text-[1.02rem] leading-7 ${
+                      isLight ? "text-[#425a55]" : "text-white/72"
+                    }`}
+                  >
                     North cluster rotas are absorbing too much journey time. Rebalancing
                     tomorrow&apos;s route density would cut the fatigue risk fastest.
                   </p>
                 </div>
-                <div className="hidden rounded-full border border-white/12 px-4 py-3 text-sm text-white/68 md:block">
+                <div
+                  className={`hidden rounded-full border px-4 py-3 text-sm md:block ${
+                    isLight
+                      ? "border-black/10 text-[#5b726d]"
+                      : "border-white/12 text-white/68"
+                  }`}
+                >
                   Recommended action within 12 hours
                 </div>
               </div>
@@ -367,8 +465,16 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="border-y border-white/8 bg-white/[0.03] py-6">
-        <div className="marquee-track flex min-w-full gap-6 whitespace-nowrap px-4 text-sm uppercase tracking-[0.28em] text-white/42 md:px-8">
+      <section
+        className={`border-y py-6 ${
+          isLight ? "border-black/8 bg-black/[0.02]" : "border-white/8 bg-white/[0.03]"
+        }`}
+      >
+        <div
+          className={`marquee-track flex min-w-full gap-6 whitespace-nowrap px-4 text-sm uppercase tracking-[0.28em] md:px-8 ${
+            isLight ? "text-[#7c6c5f]" : "text-white/42"
+          }`}
+        >
           {[
             "Missed visit visibility",
             "Burnout detection",
@@ -401,10 +507,14 @@ export default function Home() {
           <p className="text-[0.78rem] uppercase tracking-[0.28em] text-[#f0b18c]">
             Built for the reality of care operations
           </p>
-          <h2 className="mt-5 max-w-[14ch] text-[clamp(2.8rem,5vw,5.3rem)] font-semibold leading-[0.94] tracking-[-0.06em] text-white">
+          <h2
+            className={`mt-5 max-w-[14ch] text-[clamp(2.8rem,5vw,5.3rem)] font-semibold leading-[0.94] tracking-[-0.06em] ${
+              isLight ? "text-[#102225]" : "text-white"
+            }`}
+          >
             A dense signal layer for agencies that cannot afford to learn too late.
           </h2>
-          <p className="mt-6 max-w-[44rem] text-[1.06rem] leading-8 text-white/68">
+          <p className={`mt-6 max-w-[44rem] text-[1.06rem] leading-8 ${isLight ? "text-[#516864]" : "text-white/68"}`}>
             Instead of waiting for a spreadsheet review, leaders get an earlier picture
             of what is drifting: staffing load, late-call clusters, high-risk clients,
             training gaps, complaint patterns, and inspection evidence readiness.
@@ -416,7 +526,7 @@ export default function Home() {
           className="mt-14 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-6 lg:grid-rows-2 lg:grid-flow-dense"
         >
           {signalCards.map((card) => (
-            <SignalCard key={card.title} {...card} />
+            <SignalCard key={card.title} {...card} isLight={isLight} />
           ))}
         </div>
       </section>
@@ -429,12 +539,18 @@ export default function Home() {
           <p className="text-[0.78rem] uppercase tracking-[0.28em] text-[#f0b18c]">
             What managers feel
           </p>
-          <h2 className="mt-5 max-w-[10ch] text-[clamp(2.8rem,5vw,5.1rem)] font-semibold leading-[0.95] tracking-[-0.06em] text-white">
+          <h2
+            className={`mt-5 max-w-[10ch] text-[clamp(2.8rem,5vw,5.1rem)] font-semibold leading-[0.95] tracking-[-0.06em] ${
+              isLight ? "text-[#102225]" : "text-white"
+            }`}
+          >
             The service usually tells you before the report does.
           </h2>
           <p
             data-scrub-copy
-            className="mt-8 max-w-[33rem] text-[1.2rem] leading-9 text-white/70"
+            className={`mt-8 max-w-[33rem] text-[1.2rem] leading-9 ${
+              isLight ? "text-[#516864]" : "text-white/70"
+            }`}
           >
             {scrubCopy.split(" ").map((word, index) => (
               <span key={`${word}-${index}`} data-word className="mr-[0.38rem] inline-block">
@@ -449,14 +565,18 @@ export default function Home() {
             <article
               key={card.title}
               data-story-card
-              className="rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] p-6 md:p-8"
+              className={`rounded-[2rem] border p-6 md:p-8 ${
+                isLight
+                  ? "border-black/8 bg-[linear-gradient(180deg,rgba(16,34,37,0.06),rgba(16,34,37,0.02))]"
+                  : "border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))]"
+              }`}
             >
               <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
                 <div>
-                  <span className="text-sm uppercase tracking-[0.2em] text-white/46">
+                  <span className={`text-sm uppercase tracking-[0.2em] ${isLight ? "text-[#7c6c5f]" : "text-white/46"}`}>
                     Daily operating signal
                   </span>
-                  <h3 className="mt-3 text-[1.7rem] font-medium tracking-[-0.04em] text-white">
+                  <h3 className={`mt-3 text-[1.7rem] font-medium tracking-[-0.04em] ${isLight ? "text-[#102225]" : "text-white"}`}>
                     {card.title}
                   </h3>
                 </div>
@@ -464,7 +584,7 @@ export default function Home() {
                   {card.stat}
                 </strong>
               </div>
-              <p className="mt-5 max-w-[36rem] text-[1rem] leading-7 text-white/68">
+              <p className={`mt-5 max-w-[36rem] text-[1rem] leading-7 ${isLight ? "text-[#516864]" : "text-white/68"}`}>
                 {card.body}
               </p>
             </article>
@@ -477,7 +597,11 @@ export default function Home() {
           <p className="text-[0.78rem] uppercase tracking-[0.28em] text-[#f0b18c]">
             Who it helps most
           </p>
-          <h2 className="max-w-[12ch] text-[clamp(2.8rem,5vw,5.2rem)] font-semibold leading-[0.95] tracking-[-0.06em] text-white">
+          <h2
+            className={`max-w-[12ch] text-[clamp(2.8rem,5vw,5.2rem)] font-semibold leading-[0.95] tracking-[-0.06em] ${
+              isLight ? "text-[#102225]" : "text-white"
+            }`}
+          >
             Three operating views, one shared source of truth.
           </h2>
         </div>
@@ -486,7 +610,9 @@ export default function Home() {
           {accordionItems.map((item) => (
             <article
               key={item.title}
-              className="group relative min-h-[32rem] overflow-hidden rounded-[2rem] border border-white/10 bg-[#0c1a1d]"
+              className={`group relative min-h-[32rem] overflow-hidden rounded-[2rem] border ${
+                isLight ? "border-black/8 bg-[#dbe3dd]" : "border-white/10 bg-[#0c1a1d]"
+              }`}
             >
               <div
                 className="absolute inset-0 bg-cover bg-center opacity-55 grayscale contrast-125 transition-transform duration-700 ease-out group-hover:scale-105"
@@ -512,7 +638,11 @@ export default function Home() {
             <p className="text-[0.78rem] uppercase tracking-[0.28em] text-[#f0b18c]">
               Why teams stay with it
             </p>
-            <h2 className="mt-5 max-w-[10ch] text-[clamp(2.8rem,5vw,5rem)] font-semibold leading-[0.95] tracking-[-0.06em] text-white">
+            <h2
+              className={`mt-5 max-w-[10ch] text-[clamp(2.8rem,5vw,5rem)] font-semibold leading-[0.95] tracking-[-0.06em] ${
+                isLight ? "text-[#102225]" : "text-white"
+              }`}
+            >
               It sharpens judgement instead of replacing it.
             </h2>
           </div>
@@ -523,14 +653,18 @@ export default function Home() {
                 key={item.role}
                 className={`rounded-[2rem] border p-6 md:p-8 ${
                   index === 0
-                    ? "border-[#f0b18c]/40 bg-[#f0b18c]/10"
-                    : "border-white/10 bg-white/[0.04]"
+                    ? isLight
+                      ? "border-[#f0b18c]/50 bg-[#fff6ef]"
+                      : "border-[#f0b18c]/40 bg-[#f0b18c]/10"
+                    : isLight
+                      ? "border-black/8 bg-white/55"
+                      : "border-white/10 bg-white/[0.04]"
                 }`}
               >
-                <p className="max-w-[42rem] text-[1.2rem] leading-9 tracking-[-0.02em] text-white">
+                <p className={`max-w-[42rem] text-[1.2rem] leading-9 tracking-[-0.02em] ${isLight ? "text-[#102225]" : "text-white"}`}>
                   {item.quote}
                 </p>
-                <p className="mt-6 text-sm uppercase tracking-[0.18em] text-white/50">
+                <p className={`mt-6 text-sm uppercase tracking-[0.18em] ${isLight ? "text-[#7c6c5f]" : "text-white/50"}`}>
                   {item.role}
                 </p>
               </article>
@@ -594,7 +728,11 @@ export default function Home() {
           </div>
         </div>
 
-        <footer className="flex flex-col gap-4 px-1 pt-8 text-sm text-white/46 md:flex-row md:items-center md:justify-between">
+        <footer
+          className={`flex flex-col gap-4 px-1 pt-8 text-sm md:flex-row md:items-center md:justify-between ${
+            isLight ? "text-[#7c6c5f]" : "text-white/46"
+          }`}
+        >
           <p>CareSight AI by CeeqCare</p>
           <p>Operational intelligence for UK domiciliary care agencies.</p>
         </footer>
