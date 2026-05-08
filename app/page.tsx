@@ -132,7 +132,7 @@ function SignalCard({
         style={{ backgroundImage: `url(${image})` }}
       />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,18,20,0.08)_0%,rgba(7,18,20,0.86)_72%,rgba(7,18,20,0.96)_100%)]" />
-      <div className="relative flex min-h-[18rem] flex-col justify-end p-6 md:p-8">
+      <div className="relative flex min-h-[18rem] flex-col justify-end p-6 text-white md:p-8">
         <h3 className="max-w-[14ch] text-[1.5rem] font-medium leading-[1.02] tracking-[-0.04em] text-white">
           {title}
         </h3>
@@ -384,7 +384,7 @@ export default function Home() {
               }`}
             >
               <div
-                className="rounded-[2rem] bg-cover bg-center p-6 md:p-8"
+                className="rounded-[2rem] bg-cover bg-center p-6 text-white md:p-8"
                 style={{
                   backgroundImage:
                     "linear-gradient(180deg,rgba(8,18,20,0.15),rgba(8,18,20,0.92)),url(/images/landing/hero.jpg)",
@@ -401,7 +401,7 @@ export default function Home() {
                   <span className="text-sm uppercase tracking-[0.18em] text-white/52">
                     This morning
                   </span>
-                  <strong className="text-[clamp(4.5rem,10vw,7rem)] font-semibold leading-[0.88] tracking-[-0.06em]">
+                  <strong className="text-[clamp(4.5rem,10vw,7rem)] font-semibold leading-[0.88] tracking-[-0.06em] text-white">
                     72
                   </strong>
                   <span className="max-w-[18rem] text-base leading-7 text-white/72">
@@ -419,7 +419,7 @@ export default function Home() {
                   ].map(([label, value]) => (
                     <div
                       key={label}
-                      className="rounded-[1.4rem] border border-white/10 bg-black/20 p-4 backdrop-blur-md"
+                      className="rounded-[1.4rem] border border-white/10 bg-black/20 p-4 text-white backdrop-blur-md"
                     >
                       <span className="block text-sm text-white/58">{label}</span>
                       <strong className="mt-1 block text-lg font-medium text-white">
@@ -619,7 +619,7 @@ export default function Home() {
                 style={{ backgroundImage: `url(${item.image})` }}
               />
               <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,18,20,0.18),rgba(7,18,20,0.94))]" />
-              <div className="relative flex h-full flex-col justify-end p-6 md:p-8">
+              <div className="relative flex h-full flex-col justify-end p-6 text-white md:p-8">
                 <h3 className="max-w-[12ch] text-[2rem] font-medium leading-[0.95] tracking-[-0.05em] text-white">
                   {item.title}
                 </h3>
