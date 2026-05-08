@@ -2,13 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-
-const navItems = [
-  { href: "#platform", label: "Platform" },
-  { href: "#signals", label: "Signals" },
-  { href: "#story", label: "Story" },
-  { href: "#contact", label: "Book a pilot", cta: true },
-];
+import { mobileNavItems } from "@/data/landing-content";
 
 export function MobileNav({
   theme,
@@ -50,7 +44,7 @@ export function MobileNav({
               : "border-white/10 bg-[rgba(10,23,25,0.96)] shadow-[0_30px_80px_rgba(0,0,0,0.35)]"
           }`}
         >
-          {navItems.map((item) => (
+          {mobileNavItems.map((item) => (
             <Link
               key={`${item.href}-${item.label}`}
               href={item.href}
